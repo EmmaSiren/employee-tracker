@@ -1,5 +1,5 @@
 {
-  "name": "",
+  "name": "employee-tracker",
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
@@ -11,7 +11,9 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "express": "^4.17.1",
-    "mysql2": "^2.2.5"
+    "dotenv": "^8.2.0",
+    "inquirer": "8.2.4",
+    "mysql2": "^2.2.5", 
+    "console.table": "^0.10.0"
   }
 }
