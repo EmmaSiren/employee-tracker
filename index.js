@@ -1,4 +1,6 @@
 const inquirer = require('inquirer');
+const db = require('./connection');
+require('console.table');
 
 function beginPrompts() {
   inquirer.prompt([
@@ -38,8 +40,10 @@ function beginPrompts() {
 };
 
 function viewDepartments() {
-  console.log(departments);
-  beginPrompts();
+  db.promise().query('SELECT * FROM department;')
+  .then(([results]) => {
+    console.table(results);
+  }).then(()=>beginPrompts())
 };
 
 function viewRoles() {
@@ -78,3 +82,4 @@ function updateRole() {
 
 };
 
+beginPrompts();
