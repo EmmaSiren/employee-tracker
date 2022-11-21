@@ -47,38 +47,99 @@ function viewDepartments() {
 };
 
 function viewRoles() {
-  console.log(roles);
-  beginPrompts();
-
+  db.promise().query('SELECT role.id, role.title, department.name AS department, role.salary FROM role INNER JOIN department ON role.department_id=department.id;')
+  .then(([results]) => {
+    console.table(results);
+  }).then(()=>beginPrompts())
 };
 
 function viewEmployees() {
-  console.log(employees);
-  beginPrompts();
-
+  db.promise().query('SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, manager.first_name AS manager FROM employee INNER JOIN role on employee.role_id=role.id INNER JOIN department ON role.department_id=department.id LEFT JOIN employee manager on manager.id = employee.manager_id;')
+  .then(([results]) => {
+    console.table(results);
+  }).then(()=>beginPrompts())
 };
 
 function addDepartment() {
-  console.log(`${this} Department added`);
-  beginPrompts();
-
+  inquirer.prompt([{
+    type: 'input',
+    name: 'department',
+    message: 'What is the department name?'
+  }]).then((answer)=> {
+    db.promise().query(`INSERT INTO department (name) VALUES ('${answer.department}')`)
+    console.log(`${answer.department} department added`)
+  }).then(()=>beginPrompts());
 };
 
 function addRole() {
-  console.log(`${this} Role added`);
-  beginPrompts();
-
+  db.promise().query('SELECT * FROM department;')
+  .then(([results]) => {
+    const departments = results.map(({id, name}) => ({
+      value: id,
+      name: name
+    }));
+  inquirer.prompt([
+    {
+      type: 'input',
+      name: 'role',
+      message: 'What is the name of the role?'
+    },
+    {
+      type: 'input',
+      name: 'salary',
+      message: 'What is the salary for this role?'
+    },
+    {
+      type: 'list',
+      name: 'dep',
+      message: 'What department does this role belong to?',
+      choices: departments
+    }
+  ]).then((answer)=> {
+    db.promise().query(`INSERT INTO role (title, salary, department_id) VALUES ('${answer.role}', ${answer.salary}, ${answer.dep});`)
+    console.log(`${answer.role} department added`)
+    }).then(()=>beginPrompts());
+  });
 };
 
 function addEmployee() {
-  console.log(`Employee ${this} added`);
-  beginPrompts();
-
+  db.promise().query('SELECT * FROM employee;')
+  .then(([results]) => {
+    const manager = results.map(({id, first_name, last_name}) => ({
+      value: id,
+      name: `${first_name} ${last_name}`
+    }));
+  inquirer.prompt([
+    {
+      type: 'input',
+      name: 'first',
+      message: "What is the employee's first name?"
+    },
+    {
+      type: 'input',
+      name: 'last',
+      message: "What is the employee's last name?"
+    },
+    {
+      type: 'input',
+      name: 'role',
+      message: "What is the employee's role?"
+    },
+    {
+      type: 'list',
+      name: 'manager',
+      message: "Who is their manager?",
+      choices: manager
+    }
+  ]).then((answer)=> {
+    db.promise().query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ('${answer.first}', '${answer.last}', '${answer.role}', '${answer.manager}');`)
+    console.log('Employee added');
+    })
+    // .then(()=>beginPrompts());
+  });
 };
 
 function updateRole() {
-  console.log(role);
-  beginPrompts();
 
 };
 
