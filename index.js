@@ -96,8 +96,8 @@ function addRole() {
           choices: departments
         }
       ]).then((answer) => {
-        db.promise().query(`INSERT INTO role (title, salary, department_id) VALUES ('${answer.role}', ${answer.salary}, ${answer.dep});`)
-        console.log(`${answer.role} department added`)
+        db.promise().query(`INSERT INTO role (title, salary, department_id) VALUES ('${answer.role}', '${answer.salary}', '${answer.dep}')`)
+        console.log(`${answer.role} role added`)
       }).then(() => beginPrompts());
     });
 };
